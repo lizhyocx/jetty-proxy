@@ -16,6 +16,7 @@
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty.version>9.2.20.v20161216</jetty.version>
     </properties>
 
@@ -137,6 +138,7 @@
                         </goals>
                     </execution>
                 </executions>
+                <version>3.0.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
