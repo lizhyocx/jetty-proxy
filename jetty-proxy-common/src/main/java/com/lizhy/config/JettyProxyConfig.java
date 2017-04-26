@@ -11,6 +11,7 @@ public class JettyProxyConfig implements Serializable {
     private int httpPort;
     private int minServerThread;
     private int maxServerThread;
+    private int dispatcherTimeout;
 
     public int getHttpPort() {
         return httpPort;
@@ -34,5 +35,13 @@ public class JettyProxyConfig implements Serializable {
 
     public void setMaxServerThread(int maxServerThread) {
         this.maxServerThread = maxServerThread;
+    }
+
+    public int getDispatcherTimeout() {
+        return dispatcherTimeout;
+    }
+
+    public void setDispatcherTimeout(int dispatcherTimeout) {
+        this.dispatcherTimeout = dispatcherTimeout;
     }
 }

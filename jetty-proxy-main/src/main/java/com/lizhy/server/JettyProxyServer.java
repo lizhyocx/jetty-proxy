@@ -31,7 +31,7 @@ public class JettyProxyServer {
         connector.setPort(config.getHttpPort());
 
         server.addConnector(connector);
-        server.setHandler(new JettyProxyHandler());
+        server.setHandler(new JettyProxyHandler(config));
     }
 
     public void stopServer() throws Exception {

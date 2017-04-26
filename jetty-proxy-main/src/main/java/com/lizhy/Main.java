@@ -3,8 +3,11 @@ package com.lizhy;
 import com.lizhy.config.JettyProxyConfig;
 import com.lizhy.constants.ProjectConstants;
 import com.lizhy.server.JettyProxyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Properties;
 
 /**
@@ -12,8 +15,8 @@ import java.util.Properties;
  * Created by lizhiyang on 2017-04-26 11:18.
  */
 public class Main {
+    private static Logger logger = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
-
         try {
             final JettyProxyServer server = new JettyProxyServer(loadConfig());
             server.startServer();
@@ -24,12 +27,12 @@ public class Main {
                     try {
                         server.stopServer();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("stop server exception", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Main execute exeption", e);
         }
     }
 
@@ -42,6 +45,6 @@ public class Main {
         config.setMinServerThread(Integer.parseInt(properties.getProperty(ProjectConstants.JETTY_MIN_THREAD)));
         config.setMaxServerThread(Integer.parseInt(properties.getProperty(ProjectConstants.JETTY_MAX_THREAD)));
 
-        return null;
+        return config;
     }
 }

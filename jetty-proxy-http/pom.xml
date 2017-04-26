@@ -9,17 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jetty-proxy-main</artifactId>
-
+    <artifactId>jetty-proxy-http</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.lizhy</groupId>
             <artifactId>jetty-proxy-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.lizhy</groupId>
-            <artifactId>jetty-proxy-http</artifactId>
         </dependency>
     </dependencies>
 
