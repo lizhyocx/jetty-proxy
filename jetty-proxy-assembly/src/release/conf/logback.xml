@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 默认输出文件 -->
+	<appender name="DEFAULT-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/data/application/logs/janus/default/common-default.log
+		</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/data/application/logs/jetty-proxy/default/common-default.log.%d{yyyyMMdd}
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>[%d] [%t] [%-4p] [%c{2}] - [%m]%n</pattern>
+		</encoder>
+	</appender>
+	<!-- 默认错误文件 -->
+	<appender name="ERROR-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/data/application/logs/janus/error/common-error.log
+		</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/data/application/logs/jetty-proxy/error/common-error.log.%d{yyyyMMdd}
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>[%d] [%t] [%-4p] [%c{2}] - [%m]%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+	</appender>
+
+	<!-- ===================================================================== -->
+	<!-- Loggers -->
+	<!-- ===================================================================== -->
+
+	<!-- 屏蔽jdk日志 -->
+	<logger name="java" level="WARN" />
+	<!-- 屏蔽jetty日志 -->
+	<logger name="org.eclipse.jetty" level="WARN" />
+	<!-- 屏蔽logger 结束 -->
+	<root level="DEBUG">
+	
+		<!-- <appender-ref ref="STDOUT"></appender-ref> -->
+		<appender-ref ref="DEFAULT-APPENDER"></appender-ref>
+		<appender-ref ref="ERROR-APPENDER"></appender-ref>
+	</root>
+</configuration> 
