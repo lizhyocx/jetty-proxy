@@ -40,13 +40,5 @@
             <fileMode>0755</fileMode>
             <filtered>true</filtered>
         </fileSet>
-        <!--  <fileSet>
-           <directory>../janus-common/src/main/resources</directory>
-           <outputDirectory>conf</outputDirectory>
-           <includes>
-             <include>logback_gateway.xml</include>
-           </includes>
-           <filtered>true</filtered>
-         </fileSet> -->
     </fileSets>
 </assembly>
