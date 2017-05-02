@@ -36,7 +36,7 @@ public class JettyProxyHandler extends AbstractHandler {
 
         JettyProxyContext context = JettyProxyUtils.setJettyProxyContext(request);
 
-        JettyProxyResponseManager responseManager = new JettyProxyResponseManager();
+        JettyProxyResponseManager responseManager = new JettyProxyResponseManager(context);
         JettyHttpProxyWorker worker = new JettyHttpProxyWorker(responseManager, context, config);
         JettyHttpClient.getInstance().getThreadPool().execute(worker);
     }
