@@ -10,7 +10,9 @@ import com.lizhy.server.JettyProxyServer;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -36,6 +38,8 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        System.out.println("Jetty-proxy server started");
     }
 
     private static JettyProxyConfig loadConfig() throws Exception {
@@ -54,13 +58,30 @@ public class Main {
 
         //读取配置文件
         JettyProxyConfig config = new JettyProxyConfig();
-        BufferedReader reader = new BufferedReader(new FileReader(ProjectConstants.JETTY_CONF_FILE));
-        Properties properties = new Properties();
-        properties.load(reader);
-        config.setHttpPort(Integer.parseInt(properties.getProperty(ProjectConstants.JETTY_HTTP_PORT)));
-        config.setMinServerThread(Integer.parseInt(properties.getProperty(ProjectConstants.JETTY_MIN_THREAD)));
-        config.setMaxServerThread(Integer.parseInt(properties.getProperty(ProjectConstants.JETTY_MAX_THREAD)));
-
+        BufferedReader reader = null;
+        try {
+            File file = new File(ProjectConstants.JETTY_CONF_FILE);
+            if(!file.exists()) {
+                System.out.print("配置文件：jetty-proxy.conf不存在");
+            } else {
+                reader = new BufferedReader(new FileReader(file));
+                Properties properties = new Properties();
+                properties.load(reader);
+                String httpPort = properties.getProperty(ProjectConstants.JETTY_HTTP_PORT);
+                String minServerThread = properties.getProperty(ProjectConstants.JETTY_MIN_THREAD);
+                String maxServerThread = properties.getProperty(ProjectConstants.JETTY_MAX_THREAD);
+                System.out.println("httpPort="+httpPort+",minServerThread="+minServerThread+",maxServerThread="+maxServerThread);
+                config.setHttpPort(Integer.parseInt(httpPort));
+                config.setMinServerThread(Integer.parseInt(minServerThread));
+                config.setMaxServerThread(Integer.parseInt(maxServerThread));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(reader != null) {
+                reader.close();
+            }
+        }
         return config;
     }
 }

@@ -21,7 +21,7 @@ public class JettyProxyServer {
         this.config = config;
     }
 
-    public void startServer() {
+    public void startServer() throws Exception {
         BlockingDeque<Runnable> linkedBlockingDeque = new LinkedBlockingDeque<Runnable>(500);
         QueuedThreadPool threadPool = new QueuedThreadPool(config.getMinServerThread(), config.getMaxServerThread(), 60000, linkedBlockingDeque);
         threadPool.setName("JettyProxyServer ThreadPool");
@@ -32,6 +32,7 @@ public class JettyProxyServer {
 
         server.addConnector(connector);
         server.setHandler(new JettyProxyHandler(config));
+        server.start();
     }
 
     public void stopServer() throws Exception {
