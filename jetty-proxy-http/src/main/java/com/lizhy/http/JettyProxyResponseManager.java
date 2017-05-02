@@ -27,8 +27,8 @@ public class JettyProxyResponseManager {
     }
 
     public void onComplete(Result result, byte[] content) {
-
         try {
+            logger.debug("content:"+new String(content));
             context.getResponse().setStatus(result.getResponse().getStatus());
             Iterator<HttpField> it = result.getResponse().getHeaders().iterator();
             while(it.hasNext()){

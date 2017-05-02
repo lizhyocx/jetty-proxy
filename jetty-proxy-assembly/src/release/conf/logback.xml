@@ -3,10 +3,10 @@
 	<!-- 默认输出文件 -->
 	<appender name="DEFAULT-APPENDER"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>/data/application/logs/janus/default/common-default.log
+		<file>../logs/default/common-default.log
 		</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>/data/application/logs/jetty-proxy/default/common-default.log.%d{yyyyMMdd}
+			<fileNamePattern>../logs/default/common-default.log.%d{yyyyMMdd}
 			</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
@@ -17,10 +17,10 @@
 	<!-- 默认错误文件 -->
 	<appender name="ERROR-APPENDER"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>/data/application/logs/janus/error/common-error.log
+		<file>../logs/error/common-error.log
 		</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>/data/application/logs/jetty-proxy/error/common-error.log.%d{yyyyMMdd}
+			<fileNamePattern>../logs/error/common-error.log.%d{yyyyMMdd}
 			</fileNamePattern>
 		</rollingPolicy>
 		<encoder charset="UTF-8">

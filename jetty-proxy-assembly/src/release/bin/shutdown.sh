@@ -7,4 +7,5 @@ if [ $pss -eq "0" ]; then
 else
     echo "jetty-proxy server started,shutdown..."
     kill $pid
+    echo "jetty-proxy shutdown"
 fi

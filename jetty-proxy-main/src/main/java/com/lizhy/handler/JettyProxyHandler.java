@@ -31,10 +31,14 @@ public class JettyProxyHandler extends AbstractHandler {
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        logger.info("receive target:"+target+",request queryString:"+request.getQueryString());
         //开启异步
         request.startAsync();
 
         JettyProxyContext context = JettyProxyUtils.setJettyProxyContext(request);
+        context.setRequest(request);
+        context.setResponse(response);
+        logger.info("JettyProxyContext:"+context);
 
         JettyProxyResponseManager responseManager = new JettyProxyResponseManager(context);
         JettyHttpProxyWorker worker = new JettyHttpProxyWorker(responseManager, context, config);

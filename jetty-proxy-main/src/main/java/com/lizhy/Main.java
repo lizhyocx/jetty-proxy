@@ -70,10 +70,12 @@ public class Main {
                 String httpPort = properties.getProperty(ProjectConstants.JETTY_HTTP_PORT);
                 String minServerThread = properties.getProperty(ProjectConstants.JETTY_MIN_THREAD);
                 String maxServerThread = properties.getProperty(ProjectConstants.JETTY_MAX_THREAD);
+                String timeout = properties.getProperty(ProjectConstants.JETTY_DISPATCHER_TIMEOUT);
                 System.out.println("httpPort="+httpPort+",minServerThread="+minServerThread+",maxServerThread="+maxServerThread);
                 config.setHttpPort(Integer.parseInt(httpPort));
                 config.setMinServerThread(Integer.parseInt(minServerThread));
                 config.setMaxServerThread(Integer.parseInt(maxServerThread));
+                config.setDispatcherTimeout(Integer.parseInt(timeout));
             }
         } catch (IOException e) {
             e.printStackTrace();

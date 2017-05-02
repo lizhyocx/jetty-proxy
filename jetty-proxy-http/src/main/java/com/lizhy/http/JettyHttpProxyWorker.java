@@ -4,6 +4,7 @@ import com.lizhy.config.JettyProxyConfig;
 import com.lizhy.model.JettyProxyContext;
 import com.lizhy.util.JettyProxyUtils;
 import com.lizhy.util.ParamUtils;
+import com.lizhy.util.ToolUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
@@ -36,11 +37,14 @@ public class JettyHttpProxyWorker implements Runnable {
             logger.warn("dispatcherUrl is blank");
             return;
         }
-        if(dispatcherUrl.contains("?")) {
-            dispatcherUrl += "&" + ParamUtils.getFormEncodedString(context.getUrlParameterMap(), context.getCharset());
-        } else {
-            dispatcherUrl += "?" + ParamUtils.getFormEncodedString(context.getUrlParameterMap(), context.getCharset());
+        if(!ToolUtils.isMapEmpty(context.getUrlParameterMap())) {
+            if(dispatcherUrl.contains("?")) {
+                dispatcherUrl += "&" + ParamUtils.getFormEncodedString(context.getUrlParameterMap(), context.getCharset());
+            } else {
+                dispatcherUrl += "?" + ParamUtils.getFormEncodedString(context.getUrlParameterMap(), context.getCharset());
+            }
         }
+        logger.debug("dispatcherUrl:"+dispatcherUrl);
         HttpClient client = JettyHttpClient.getInstance().getHttpClient();
         Request req = client.newRequest(dispatcherUrl).timeout(config.getDispatcherTimeout(), TimeUnit.SECONDS)
                 .method(context.getRequest().getMethod());// 设置超时

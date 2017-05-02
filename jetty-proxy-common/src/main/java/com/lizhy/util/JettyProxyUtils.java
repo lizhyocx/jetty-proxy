@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.plaf.ToolBarUI;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -68,12 +69,14 @@ public class JettyProxyUtils {
             //url后存在参数，区分出body体中的参数
             Map<String, String[]> bodyParamMap = new HashMap<String, String[]>();
             Map<String, String[]> urlParamMap = ParamUtils.getUrlParamMap(queryString);
-            Map<String, String[]> paramMap = request.getParameterMap();
-            logger.debug("request parameterMap:"+paramMap);
-            if(!ToolUtils.isMapEmpty(urlParamMap) && !ToolUtils.isMapEmpty(paramMap)) {
+            if(!ToolUtils.isMapEmpty(urlParamMap)) {
                 context.setDispatcherUrl(ParamUtils.getValueFromMap(urlParamMap, ProjectConstants.JETTY_DISPATCHER_URL));
                 urlParamMap.remove(ProjectConstants.JETTY_DISPATCHER_URL);
                 context.setUrlParameterMap(urlParamMap);
+            }
+            Map<String, String[]> paramMap = request.getParameterMap();
+            logger.debug("request parameterMap:"+paramMap);
+            if(!ToolUtils.isMapEmpty(urlParamMap) && !ToolUtils.isMapEmpty(paramMap)) {
                 for(String paramKey : paramMap.keySet()) {
                     String[] paramValue = paramMap.get(paramKey);
                     if(paramValue != null && paramValue.length > 0) {
