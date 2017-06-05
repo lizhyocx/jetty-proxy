@@ -5,13 +5,16 @@ import com.lizhy.constants.ProjectConstants;
 import com.lizhy.model.JettyProxyContext;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.client.util.StringContentProvider;
+import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.plaf.ToolBarUI;
 import java.io.IOException;
 import java.util.*;
@@ -206,6 +209,21 @@ public class JettyProxyUtils {
         proxyRequest.header(HttpHeader.X_FORWARDED_PROTO, clientRequest.getScheme());
         proxyRequest.header(HttpHeader.X_FORWARDED_HOST, clientRequest.getHeader(HttpHeader.HOST.asString()));
         proxyRequest.header(HttpHeader.X_FORWARDED_SERVER, clientRequest.getLocalName());
+    }
+
+    /**
+     * 拷贝response响应头
+     */
+    public static void copyResponseHeaders(Response response, HttpServletResponse httpServletResponse) {
+        Iterator<HttpField> it = response.getHeaders().iterator();
+        while(it.hasNext()){
+            HttpField next = it.next();
+            String headerName = next.getName();
+            String lowerHeaderName = headerName.toLowerCase(Locale.ENGLISH);
+            if(!HOP_HEADERS.contains(lowerHeaderName) && !"content-encoding".equals(lowerHeaderName)) {
+                httpServletResponse.addHeader(headerName, next.getValue());
+            }
+        }
     }
 
 

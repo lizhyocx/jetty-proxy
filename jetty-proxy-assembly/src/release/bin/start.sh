@@ -23,9 +23,11 @@ run_main() {
   if [ ${CLEAN_FLAG} -ne 0 ]; then
     set -x
   fi
-  #$EXEC $JAVA_HOME/bin/java $JAVA_OPTS $MAIN_JAVA_OPTS "${arr_java_props[@]}" -cp "$MAIN_CLASSPATH" \
+  #$EXEC $JAVA_HOME/bin/java -Xbootclasspath/p:$MAIN_HOME/lib/alpn-boot-8.1.9.v20160720.jar \
+        $JAVA_OPTS $MAIN_JAVA_OPTS "${arr_java_props[@]}" -cp "$MAIN_CLASSPATH" \
   #    -Djava.library.path=$MAIN_JAVA_LIBRARY_PATH "$MAIN_APPLICATION_CLASS" "--conf-file conf/avro.conf --name a1"
-  $EXEC $JAVA_HOME/bin/java $JAVA_OPTS $MAIN_JAVA_OPTS "${arr_java_props[@]}" -cp "$MAIN_CLASSPATH" \
+  $EXEC $JAVA_HOME/bin/java -Xbootclasspath/p:$MAIN_HOME/lib/alpn-boot-8.1.9.v20160720.jar \
+        $JAVA_OPTS $MAIN_JAVA_OPTS "${arr_java_props[@]}" -cp "$MAIN_CLASSPATH" \
       -Djava.library.path=$MAIN_JAVA_LIBRARY_PATH "$MAIN_APPLICATION_CLASS" &
 }
 

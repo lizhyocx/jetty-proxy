@@ -1,8 +1,8 @@
 package com.lizhy.http;
 
 import com.lizhy.model.JettyProxyContext;
+import com.lizhy.util.JettyProxyUtils;
 import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpHeaderValue;
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -30,11 +29,7 @@ public class JettyProxyResponseManager {
         try {
             logger.debug("content:"+new String(content));
             context.getResponse().setStatus(result.getResponse().getStatus());
-            Iterator<HttpField> it = result.getResponse().getHeaders().iterator();
-            while(it.hasNext()){
-                HttpField next = it.next();
-                context.getResponse().setHeader(next.getName(), next.getValue());
-            }
+            JettyProxyUtils.copyResponseHeaders(result.getResponse(), context.getResponse());
             context.getResponse().getOutputStream().write(content);
 
             context.getResponse().flushBuffer();

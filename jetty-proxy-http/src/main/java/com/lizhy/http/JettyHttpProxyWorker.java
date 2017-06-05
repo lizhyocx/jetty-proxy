@@ -56,7 +56,7 @@ public class JettyHttpProxyWorker implements Runnable {
                     byte[] content = getContent();
                     responseManager.onComplete(result, content);
                 }else {
-                    logger.error("http call error:{},{}",result.getFailure(),result.getResponseFailure());
+                    logger.error("http call error:{}",result.getFailure());
                     // 目标地址不可达时，定义统一异常返回
                     responseManager.onFail(result);
                 }

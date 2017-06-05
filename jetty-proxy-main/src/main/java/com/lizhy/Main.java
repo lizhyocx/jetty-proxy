@@ -29,7 +29,9 @@ public class Main {
                 @Override
                 public void run() {
                     try {
-                        server.stopServer();
+                        if(server != null) {
+                            server.stopServer();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -68,14 +70,30 @@ public class Main {
                 Properties properties = new Properties();
                 properties.load(reader);
                 String httpPort = properties.getProperty(ProjectConstants.JETTY_HTTP_PORT);
+                String httpsPort = properties.getProperty(ProjectConstants.JETTY_HTTPS_PORT);
                 String minServerThread = properties.getProperty(ProjectConstants.JETTY_MIN_THREAD);
                 String maxServerThread = properties.getProperty(ProjectConstants.JETTY_MAX_THREAD);
                 String timeout = properties.getProperty(ProjectConstants.JETTY_DISPATCHER_TIMEOUT);
-                System.out.println("httpPort="+httpPort+",minServerThread="+minServerThread+",maxServerThread="+maxServerThread);
+
+                String keyStorePath = properties.getProperty(ProjectConstants.JETTY_SSL_KEYSTORE_PATH);
+                String keyStorePassword = properties.getProperty(ProjectConstants.JETTY_SSL_KEYSTORE_PASSWORD);
+                String keyStoreType = properties.getProperty(ProjectConstants.JETTY_SSL_KEYSTORE_TYPE);
+                String keyManagerPassword = properties.getProperty(ProjectConstants.JETTY_SSL_KEYMANAGER_PASSWORD);
+                String trustStorePath = properties.getProperty(ProjectConstants.JETTY_SSL_TRUSTSTORE_PATH);
+
+                System.out.println("httpPort="+httpPort+"httpsPort="+httpsPort+",minServerThread="+minServerThread+
+                        ",maxServerThread="+maxServerThread+",timeout="+timeout+",keyStorePath="+keyStorePath+",keyStorePassword="+keyStorePassword+
+                        ", keyStoreType="+keyStoreType+", keyMangerPassword="+keyManagerPassword+",trustStorePath="+trustStorePath);
                 config.setHttpPort(Integer.parseInt(httpPort));
+                config.setHttpsPort(Integer.parseInt(httpsPort));
                 config.setMinServerThread(Integer.parseInt(minServerThread));
                 config.setMaxServerThread(Integer.parseInt(maxServerThread));
                 config.setDispatcherTimeout(Integer.parseInt(timeout));
+                config.setKeyStorePath(keyStorePath);
+                config.setKeyStorePassword(keyStorePassword);
+                config.setKeyStoreType(keyStoreType);
+                config.setKeyManagerPassword(keyManagerPassword);
+                config.setTrustStorePath(trustStorePath);
             }
         } catch (IOException e) {
             e.printStackTrace();

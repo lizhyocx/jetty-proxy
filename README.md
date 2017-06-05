@@ -7,6 +7,12 @@
 
 3、要求请求转发需要透明传递，不能更改任何信息（参考AsyncProxyServlet实现，增强扩展性）
 
+4、jetty支持http2，接收https请求
+
+    a、升级jetty版本为9.4.x，JDK版本为：1.8，alpn版本依赖jdk版本
+    b、start脚本添加alpn启动项：-Xbootclasspath/p:
+    c、conf中配置证书信息
+
 ## 打包编译方式：
 mvn clean package
 
