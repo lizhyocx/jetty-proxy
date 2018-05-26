@@ -29,8 +29,12 @@ public class JettyProxyHandler extends AbstractHandler {
         this.config = config;
     }
 
+    @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        if(response.isCommitted() || baseRequest.isHandled()) {
+            return;
+        }
         logger.info("receive target:"+target+",request queryString:"+request.getQueryString());
         //开启异步
         request.startAsync();

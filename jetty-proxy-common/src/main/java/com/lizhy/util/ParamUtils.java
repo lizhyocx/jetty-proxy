@@ -30,13 +30,21 @@ public class ParamUtils {
         if(StringUtils.isNotBlank(queryString)) {
             String[] params = queryString.split("&");
             for (String param : params) {
-                String[] arrParam = param.split("=");
-                if (arrParam.length > 1) {
-                    put2ArrIfExist(urlParamMap, arrParam[0], arrParam[1]);
+                int index = param.indexOf("=");
+                String key = "";
+                String value = "";
+                if(index > -1) {
+                    key = param.substring(0, index);
+                    value = param.substring(index+1);
                 } else {
-                    if (StringUtils.isNotBlank(arrParam[0])) {
-                        if(!urlParamMap.containsKey(arrParam[0])) {
-                            urlParamMap.put(arrParam[0], new String[]{""});
+                    key = param;
+                }
+                if (StringUtils.isNotBlank(value)) {
+                    put2ArrIfExist(urlParamMap, key, value);
+                } else {
+                    if (StringUtils.isNotBlank(key)) {
+                        if(!urlParamMap.containsKey(key)) {
+                            urlParamMap.put(key, new String[]{""});
                         }
                     }
                 }
