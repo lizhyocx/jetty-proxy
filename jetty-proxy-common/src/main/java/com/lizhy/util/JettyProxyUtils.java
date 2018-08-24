@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.ToolBarUI;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -128,11 +129,22 @@ public class JettyProxyUtils {
      * @param context
      */
     public static void setJettyProxyRequest(Request request, JettyProxyContext context) {
+        ByteArrayOutputStream bos = null;
         try {
             if(context.getRequest().getContentLength() > 0) {
-                if(context.getRequest().getInputStream().available() > 0) {
-                    request.content(new InputStreamContentProvider(context.getRequest().getInputStream(), context.getRequest().getContentLength()),
-                            context.getRequest().getContentType());
+                if(context.getRequest().getInputStream() != null) {
+                    bos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int len = 0;
+                    while((len = context.getRequest().getInputStream().read(buffer)) > -1) {
+                        bos.write(buffer, 0, len);
+                    }
+                    bos.flush();
+                    byte[] content = bos.toByteArray();
+                    if(content != null && content.length > 0) {
+                        request.content(new InputStreamContentProvider(new ByteArrayInputStream(content), context.getRequest().getContentLength()),
+                                context.getRequest().getContentType());
+                    }
                 }
                 if(!ToolUtils.isMapEmpty(context.getBodyParameterMap())) {
                     String bodyParam = ParamUtils.getFormEncodedString(context.getBodyParameterMap(), context.getCharset());
@@ -143,6 +155,14 @@ public class JettyProxyUtils {
 
         } catch (IOException e) {
             logger.error("request content exception", e);
+        } finally {
+            if(bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    logger.error("stream close exception", e);
+                }
+            }
         }
 
         context.setSendTime(System.currentTimeMillis());
@@ -173,17 +193,21 @@ public class JettyProxyUtils {
             String headerName = headerNames.nextElement();
             String lowerHeaderName = headerName.toLowerCase(Locale.ENGLISH);
 
-            if (HttpHeader.HOST.is(headerName))
+            if (HttpHeader.HOST.is(headerName)) {
                 continue;
+            }
             // Remove hop-by-hop headers.
-            if (HOP_HEADERS.contains(lowerHeaderName))
+            if (HOP_HEADERS.contains(lowerHeaderName)) {
                 continue;
-            if (headersToRemove != null && headersToRemove.contains(lowerHeaderName))
+            }
+            if (headersToRemove != null && headersToRemove.contains(lowerHeaderName)) {
                 continue;
+            }
             for (Enumeration<String> headerValues = clientRequest.getHeaders(headerName); headerValues.hasMoreElements();) {
                 String headerValue = headerValues.nextElement();
-                if (headerValue != null)
+                if (headerValue != null) {
                     proxyRequest.header(headerName, headerValue);
+                }
             }
         }
     }
@@ -196,8 +220,9 @@ public class JettyProxyUtils {
             String[] values = value.split(",");
             for (String name : values) {
                 name = name.trim().toLowerCase(Locale.ENGLISH);
-                if (hopHeaders == null)
+                if (hopHeaders == null) {
                     hopHeaders = new HashSet<>();
+                }
                 hopHeaders.add(name);
             }
         }
