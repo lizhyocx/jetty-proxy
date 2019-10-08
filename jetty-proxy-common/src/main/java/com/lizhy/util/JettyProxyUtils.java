@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
  */
 public class JettyProxyUtils {
     private static Logger logger = LoggerFactory.getLogger(JettyProxyUtils.class);
+    private static Pattern p =  Pattern.compile("(?<=//|)((\\w)+\\.)+\\w+");
 
     private static final Set<String> HOP_HEADERS;
     static
@@ -57,6 +59,7 @@ public class JettyProxyUtils {
         charset = charset == null ? "UTF-8" : charset;
         context.setCharset(charset);
         context.setRequestIP(ToolUtils.getRemoteIPAddress(request));
+        context.setRequestURI(request.getRequestURI());
         return context;
     }
 
@@ -177,7 +180,6 @@ public class JettyProxyUtils {
             return "";
         }
         String host = "";
-        Pattern p =  Pattern.compile("(?<=//|)((\\w)+\\.)+\\w+");
         Matcher matcher = p.matcher(url);
         if(matcher.find()){
             host = matcher.group();
@@ -247,6 +249,53 @@ public class JettyProxyUtils {
             String lowerHeaderName = headerName.toLowerCase(Locale.ENGLISH);
             if(!HOP_HEADERS.contains(lowerHeaderName) && !"content-encoding".equals(lowerHeaderName)) {
                 httpServletResponse.addHeader(headerName, next.getValue());
+            }
+        }
+    }
+
+    /**
+     * 向客户端响应信息
+     * @param response
+     * @param responseMsg 响应信息
+     * @param contentType 响应信息的格式，不填默认为application/json; charset=utf-8
+     * @param logger 打印日志使用，如果为空不打印
+     */
+    public static void handleResponse(HttpServletResponse response,String responseMsg,String contentType,Logger logger){
+        handleResponse(response,responseMsg,contentType,200,logger);
+    }
+    /**
+     * 向客户端响应信息
+     * @param response
+     * @param responseMsg 响应信息
+     * @param contentType 响应信息的格式，不填默认为application/json; charset=utf-8
+     * @param sc 返回码status code 默认为200
+     * @param logger 打印日志使用，如果为空不打印
+     */
+    public static void handleResponse(HttpServletResponse response,String responseMsg,String contentType,int sc,Logger logger) {
+        OutputStream out = null;
+        try {
+            response.setCharacterEncoding("UTF-8");
+            if(StringUtils.isBlank(contentType)) {
+                contentType = "application/json; charset=utf-8";
+            }
+            response.setContentType(contentType);
+            if(sc <= 0) {
+                sc = HttpServletResponse.SC_OK;
+            }
+            response.setStatus(sc);
+            out = response.getOutputStream();
+            out.write(responseMsg.getBytes("UTF-8"));
+        } catch (IOException e) {
+            if(logger != null) {
+                logger.error("handleResponse error, responseMsg" + responseMsg, e);
+            }
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    logger.error("outputstream close exception", e);
+                }
             }
         }
     }

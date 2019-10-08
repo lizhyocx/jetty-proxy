@@ -23,6 +23,7 @@ public class JettyProxyContext implements Serializable {
     private Long sendTime;
     //客户端请求IP
     private String requestIP;
+    private String requestURI;
     //转发url地址，从url参数中获取
     private String dispatcherUrl;
     //url中的参数信息（去除转发路径）
@@ -73,6 +74,14 @@ public class JettyProxyContext implements Serializable {
 
     public void setRequestIP(String requestIP) {
         this.requestIP = requestIP;
+    }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
     }
 
     public Map<String, String[]> getUrlParameterMap() {

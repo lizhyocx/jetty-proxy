@@ -1,9 +1,13 @@
 package com.lizhy.handler;
 
 import com.lizhy.config.JettyProxyConfig;
+import com.lizhy.constants.ProjectConstants;
+import com.lizhy.handler.pre.AccessAmountPreHandler;
+import com.lizhy.handler.pre.InnerRequestPreHandler;
 import com.lizhy.http.JettyHttpClient;
 import com.lizhy.http.JettyHttpProxyWorker;
 import com.lizhy.http.JettyProxyResponseManager;
+import com.lizhy.model.JettyCallResult;
 import com.lizhy.model.JettyProxyContext;
 import com.lizhy.util.JettyProxyUtils;
 import org.eclipse.jetty.server.Request;
@@ -35,15 +39,29 @@ public class JettyProxyHandler extends AbstractHandler {
         if(response.isCommitted() || baseRequest.isHandled()) {
             return;
         }
+        ;baseRequest.setHandled(true);
         logger.info("receive target:"+target+",request queryString:"+request.getQueryString());
-        //开启异步
-        request.startAsync();
 
         JettyProxyContext context = JettyProxyUtils.setJettyProxyContext(request);
         context.setRequest(request);
         context.setResponse(response);
         logger.info("JettyProxyContext:"+context);
 
+
+        AccessAmountPreHandler accessAmountPreHandler = new AccessAmountPreHandler();
+        InnerRequestPreHandler innerRequestPreHandler = new InnerRequestPreHandler(response);
+        accessAmountPreHandler.setNextHandler(innerRequestPreHandler);
+        JettyCallResult<Boolean> result = accessAmountPreHandler.doHandler(context);
+        if(result == null || !result.isSuccess()) {
+            logger.warn("pre handler fail, result={}", result);
+            return;
+        }
+        if(result.getCode() == ProjectConstants.END_REQUEST) {
+            return;
+        }
+
+        //开启异步
+        request.startAsync();
         JettyProxyResponseManager responseManager = new JettyProxyResponseManager(context);
         JettyHttpProxyWorker worker = new JettyHttpProxyWorker(responseManager, context, config);
         JettyHttpClient.getInstance().getThreadPool().execute(worker);

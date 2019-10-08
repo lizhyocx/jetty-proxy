@@ -24,4 +24,6 @@ public class ProjectConstants {
 
 
     public static final String JETTY_DISPATCHER_URL = "j_dis_url";
+
+    public static final int END_REQUEST = 20000;
 }
